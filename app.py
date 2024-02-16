@@ -36,6 +36,25 @@ def delete_bookmark(bookmark_id):
     # Redirect to the index page after deleting a bookmark
     return redirect(url_for("index"))
 
+# Route for editing a bookmark
+@app.route("/edit_bookmark/<int:bookmark_id>", methods=["GET", "POST"])
+def edit_bookmark(bookmark_id):
+    # Find the bookmark with the specified ID
+    bookmark = next((bm for bm in bookmarks if bm["id"] == bookmark_id), None)
+
+    if bookmark:
+        if request.method == "POST":
+            # Update bookmark details based on the form submission
+            bookmark["title"] = request.form.get("title")
+            bookmark["url"] = request.form.get("url")
+            return redirect(url_for("index"))
+        else:
+            # Render the edit bookmark form
+            return render_template("edit_bookmark.html", bookmark=bookmark)
+    else:
+        # Redirect to the index page if the bookmark is not found
+        return redirect(url_for("index"))
+
 # Run the Flask application
 if __name__ == "__main__":
     app.run(debug=True)
